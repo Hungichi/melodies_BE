@@ -1,5 +1,5 @@
 const Song = require('../models/Song');
-const { uploadToS3 } = require('../config/s3');
+const cloudinary = require('../config/cloudinary');
 
 // Get all songs
 exports.getAllSongs = async (req, res) => {
@@ -24,6 +24,19 @@ exports.getSong = async (req, res) => {
   }
 };
 
+// Upload file to Cloudinary
+const uploadToCloudinary = async (file, folder) => {
+  try {
+    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+      folder: folder,
+      resource_type: 'auto'
+    });
+    return result.secure_url;
+  } catch (error) {
+    throw new Error(`Error uploading to Cloudinary: ${error.message}`);
+  }
+};
+
 // Create new song
 exports.createSong = async (req, res) => {
   try {
@@ -35,8 +48,8 @@ exports.createSong = async (req, res) => {
       return res.status(400).json({ message: 'Audio file is required' });
     }
 
-    const audioUrl = await uploadToS3(audioFile, 'audio');
-    const coverImageUrl = coverImage ? await uploadToS3(coverImage, 'covers') : null;
+    const audioUrl = await uploadToCloudinary(audioFile, 'audio');
+    const coverImageUrl = coverImage ? await uploadToCloudinary(coverImage, 'covers') : null;
 
     const song = new Song({
       title,
@@ -76,11 +89,11 @@ exports.updateSong = async (req, res) => {
     if (releaseDate) song.releaseDate = releaseDate;
 
     if (audioFile) {
-      song.audioUrl = await uploadToS3(audioFile, 'audio');
+      song.audioUrl = await uploadToCloudinary(audioFile, 'audio');
     }
 
     if (coverImage) {
-      song.coverImage = await uploadToS3(coverImage, 'covers');
+      song.coverImage = await uploadToCloudinary(coverImage, 'covers');
     }
 
     const updatedSong = await song.save();
@@ -96,6 +109,16 @@ exports.deleteSong = async (req, res) => {
     const song = await Song.findById(req.params.id);
     if (!song) {
       return res.status(404).json({ message: 'Song not found' });
+    }
+
+    // Delete files from Cloudinary if they exist
+    if (song.audioUrl) {
+      const publicId = song.audioUrl.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(`audio/${publicId}`);
+    }
+    if (song.coverImage) {
+      const publicId = song.coverImage.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(`covers/${publicId}`);
     }
 
     await song.remove();
