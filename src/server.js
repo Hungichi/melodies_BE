@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const songRoutes = require('./routes/songRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/melodies_
 
 // Routes
 app.use('/api/songs', songRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Melodies API' });
