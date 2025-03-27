@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const fileUpload = require('express-fileupload');
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./config/swagger');
 const songRoutes = require('./routes/songRoutes');
 const authRoutes = require('./routes/authRoutes');
 
@@ -12,6 +15,13 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/'
+}));
+
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/melodies_db')
