@@ -3,14 +3,14 @@ const router = express.Router();
 const multer = require('multer');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const {
-  getAllSongs,
-  getSong,
-  createSong,
-  updateSong,
-  deleteSong,
-  toggleLike,
-  addComment,
-  getTrendingSongs
+    getAllSongs,
+    getSong,
+    createSong,
+    updateSong,
+    deleteSong,
+    toggleLike,
+    addComment,
+    getTrendingSongs,
 } = require('../controllers/songController');
 
 // Configure multer for file uploads
@@ -151,7 +151,12 @@ router.post('/:id/comments', addComment);
  *       401:
  *         description: Not authorized
  */
-router.post('/', authorize('artist', 'admin'), upload.single('audioFile'), createSong);
+router.post(
+    '/',
+    authorize('artist', 'admin'),
+    upload.single('audioFile'),
+    createSong
+);
 
 /**
  * @swagger
@@ -208,4 +213,4 @@ router.put('/:id', authorize('artist', 'admin'), updateSong);
  */
 router.delete('/:id', authorize('artist', 'admin'), deleteSong);
 
-module.exports = router; 
+module.exports = router;
