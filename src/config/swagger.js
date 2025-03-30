@@ -2,6 +2,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const path = require('path');
 
 const options = {
+
   definition: {
     openapi: '3.0.0',
     info: {
@@ -25,15 +26,21 @@ const options = {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
+
         },
-      },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
+
     security: [{
       bearerAuth: [],
     }],
   },
   apis: [path.resolve(__dirname, '../routes/*.js')], // Absolute path to the API routes
-};
+
 
 const specs = swaggerJsdoc(options);
-module.exports = specs; 
+module.exports = specs;
