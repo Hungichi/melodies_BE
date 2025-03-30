@@ -11,10 +11,12 @@ const generateToken = (userId) => {
 // Register new user
 exports.register = async (req, res) => {
   try {
+    console.log('Registration request received:', req.body);
     const { username, email, password, confirmPassword } = req.body;
 
     // Check if passwords match
     if (password !== confirmPassword) {
+      console.log('Passwords do not match');
       return res.status(400).json({
         success: false,
         message: 'Passwords do not match'
@@ -22,8 +24,10 @@ exports.register = async (req, res) => {
     }
 
     // Check if user already exists
+    console.log('Checking if user exists...');
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
     if (userExists) {
+      console.log('User already exists:', userExists);
       return res.status(400).json({
         success: false,
         message: userExists.email === email ? 'Email already registered' : 'Username already taken'
@@ -31,12 +35,14 @@ exports.register = async (req, res) => {
     }
 
     // Create new user
+    console.log('Creating new user...');
     const user = await User.create({
       username,
       email,
       password,
       confirmPassword
     });
+    console.log('User created successfully:', user);
 
     // Generate token
     const token = generateToken(user._id);
@@ -53,6 +59,7 @@ exports.register = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(400).json({
       success: false,
       message: error.message

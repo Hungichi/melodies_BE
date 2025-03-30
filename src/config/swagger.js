@@ -1,4 +1,5 @@
 const swaggerJsdoc = require('swagger-jsdoc');
+const path = require('path');
 
 const options = {
   definition: {
@@ -6,13 +7,17 @@ const options = {
     info: {
       title: 'Melodies API Documentation',
       version: '1.0.0',
-      description: 'API documentation for Melodies web application',
+      description: 'API documentation for Melodies music application',
     },
     servers: [
       {
         url: 'http://localhost:5000',
         description: 'Development server',
       },
+      {
+        url: 'http://localhost:8000',
+        description: 'Alternative development server',
+      }
     ],
     components: {
       securitySchemes: {
@@ -27,7 +32,7 @@ const options = {
       bearerAuth: [],
     }],
   },
-  apis: ['./src/routes/*.js'], // Path to the API routes
+  apis: [path.resolve(__dirname, '../routes/*.js')], // Absolute path to the API routes
 };
 
 const specs = swaggerJsdoc(options);
