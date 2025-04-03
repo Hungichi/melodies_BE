@@ -4,7 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const fileUpload = require('express-fileupload');
 const swaggerUi = require('swagger-ui-express');
-const specs = require('./config/swagger');
+const swaggerDocument = require('../swagger.json');
 const songRoutes = require('./routes/songRoutes');
 const authRoutes = require('./routes/authRoutes');
 
@@ -13,7 +13,10 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
 app.use(express.json());
 app.use(
     fileUpload({
@@ -23,7 +26,7 @@ app.use(
 );
 
 // Swagger Documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // MongoDB Connection
 mongoose
