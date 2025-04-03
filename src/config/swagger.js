@@ -12,7 +12,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000',
+        url: 'https://be-melodies-dch6fbbo0-nguyens-projects-9f74018a.vercel.app',
         description: 'Development server',
       },
       {
