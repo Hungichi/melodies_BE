@@ -5,9 +5,7 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, 'Username is required'],
-    unique: true,
-    trim: true,
-    minlength: [3, 'Username must be at least 3 characters long']
+    trim: true
   },
   email: {
     type: String,
@@ -20,22 +18,16 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [6, 'Password must be at least 6 characters long']
-  },
-  confirmPassword: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      validator: function(el) {
-        return el === this.password;
-      },
-      message: 'Passwords do not match'
-    }
+    minlength: [6, 'Password must be at least 6 characters']
   },
   role: {
     type: String,
     enum: ['listener', 'artist', 'admin'],
     default: 'listener'
+  },
+  isPremium: {
+    type: Boolean,
+    default: false
   },
   favoriteSongs: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -55,28 +47,16 @@ const userSchema = new mongoose.Schema({
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    // Remove confirmPassword before saving
-    this.confirmPassword = undefined;
+  if (!this.isModified('password')) {
     next();
-  } catch (error) {
-    next(error);
   }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword) {
-  try {
-    return await bcrypt.compare(candidatePassword, this.password);
-  } catch (error) {
-    throw error;
-  }
+// Compare password method
+userSchema.methods.comparePassword = async function(enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
-
-module.exports = User; 
+module.exports = mongoose.model('User', userSchema); 

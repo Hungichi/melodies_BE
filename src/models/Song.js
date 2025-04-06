@@ -11,10 +11,6 @@ const songSchema = new mongoose.Schema({
     ref: 'User',
     required: [true, 'Artist is required']
   },
-  album: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Album'
-  },
   genre: {
     type: String,
     required: [true, 'Genre is required'],

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getProfile, updateProfile } = require('../controllers/authController');
+const { register, login, getCurrentUser, updateProfile } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
 /**
@@ -19,18 +19,53 @@ const { protect } = require('../middleware/authMiddleware');
  *               - username
  *               - email
  *               - password
+ *               - confirmPassword
  *             properties:
  *               username:
  *                 type: string
+ *                 description: Username for the account
  *               email:
  *                 type: string
+ *                 format: email
+ *                 description: Email address for the account
  *               password:
  *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 description: Password for the account
+ *               confirmPassword:
+ *                 type: string
+ *                 format: password
+ *                 description: Confirm password (must match password)
  *     responses:
  *       201:
  *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                     isPremium:
+ *                       type: boolean
  *       400:
- *         description: Invalid input data
+ *         description: Invalid input data or passwords do not match
+ *       500:
+ *         description: Internal server error
  */
 router.post('/register', register);
 
@@ -57,13 +92,6 @@ router.post('/register', register);
  *     responses:
  *       200:
  *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
  *       401:
  *         description: Invalid credentials
  */
@@ -71,9 +99,9 @@ router.post('/login', login);
 
 /**
  * @swagger
- * /api/auth/profile:
+ * /api/auth/me:
  *   get:
- *     summary: Get user profile
+ *     summary: Get current user profile
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -83,7 +111,7 @@ router.post('/login', login);
  *       401:
  *         description: Not authorized
  */
-router.get('/profile', protect, getProfile);
+router.get('/me', protect, getCurrentUser);
 
 /**
  * @swagger
@@ -103,6 +131,15 @@ router.get('/profile', protect, getProfile);
  *               username:
  *                 type: string
  *               email:
+ *                 type: string
+ *               fullName:
+ *                 type: string
+ *               dateOfBirth:
+ *                 type: string
+ *                 format: date
+ *               location:
+ *                 type: string
+ *               bio:
  *                 type: string
  *     responses:
  *       200:
