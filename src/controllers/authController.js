@@ -99,6 +99,7 @@ exports.login = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      message: 'Login successful! Welcome back.',
       token,
       user: {
         id: user._id,
@@ -123,6 +124,13 @@ exports.login = async (req, res) => {
 exports.getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
     const userDetails = await UserDetails.findOne({ userId: user._id });
 
     res.status(200).json({
@@ -184,6 +192,7 @@ exports.updateProfile = async (req, res) => {
 
     res.json({
       success: true,
+      message: 'Profile updated successfully',
       user: {
         id: user._id,
         username: user.username,
@@ -200,4 +209,4 @@ exports.updateProfile = async (req, res) => {
       message: 'Internal server error'
     });
   }
-}; 
+};

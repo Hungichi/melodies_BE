@@ -12,23 +12,30 @@ const songSchema = new mongoose.Schema({
     required: [true, 'Artist is required']
   },
   genre: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Genre',
+    required: [true, 'Genre is required']
+  },
+  album: {
     type: String,
-    required: [true, 'Genre is required'],
     trim: true
   },
   duration: {
     type: Number,
-    required: [true, 'Duration is required']
+    required: [true, 'Duration is required'],
+    min: [0, 'Duration cannot be negative']
   },
   audioUrl: {
     type: String,
     required: [true, 'Audio URL is required']
   },
   coverImage: {
-    type: String
+    type: String,
+    default: 'default-cover.jpg'
   },
   lyrics: {
-    type: String
+    type: String,
+    trim: true
   },
   releaseDate: {
     type: Date,
@@ -36,7 +43,8 @@ const songSchema = new mongoose.Schema({
   },
   plays: {
     type: Number,
-    default: 0
+    default: 0,
+    min: [0, 'Plays cannot be negative']
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -45,9 +53,14 @@ const songSchema = new mongoose.Schema({
   comments: [{
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      required: true
     },
-    text: String,
+    text: {
+      type: String,
+      required: true,
+      trim: true
+    },
     createdAt: {
       type: Date,
       default: Date.now
@@ -57,9 +70,7 @@ const songSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for search
-songSchema.index({ title: 'text', genre: 'text' });
+// Index for search functionality
+songSchema.index({ title: 'text', lyrics: 'text' });
 
-const Song = mongoose.model('Song', songSchema);
-
-module.exports = Song; 
+module.exports = mongoose.model('Song', songSchema);

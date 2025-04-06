@@ -149,4 +149,4 @@ router.get('/me', protect, getCurrentUser);
  */
 router.put('/profile', protect, updateProfile);
 
-module.exports = router; 
+module.exports = router;
