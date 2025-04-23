@@ -18,7 +18,7 @@ const songSchema = new mongoose.Schema({
       values: [
         'Pop',
         'Rock',
-        'Hip Hop',
+        'Hip-Hop',
         'R&B',
         'Electronic',
         'Classical',
@@ -29,7 +29,7 @@ const songSchema = new mongoose.Schema({
         'Metal',
         'Indie',
         'K-Pop',
-        'Latin',
+        'V-Pop',
         'World Music'
       ],
       message: '{VALUE} is not a valid genre'

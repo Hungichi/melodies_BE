@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const fileUpload = require('express-fileupload');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
 
@@ -21,13 +20,6 @@ app.use(cors({
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// File Upload
-app.use(fileUpload({
-    useTempFiles: true,
-    tempFileDir: '/tmp/',
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max-file-size
-}));
 
 // Logger
 app.use(morgan('dev'));

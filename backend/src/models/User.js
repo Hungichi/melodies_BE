@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
     enum: ['listener', 'artist', 'admin'],
     default: 'listener'
   },
+  stageName: {
+    type: String,
+    trim: true,
+    default: null
+  },
   isPremium: {
     type: Boolean,
     default: false
@@ -54,6 +59,21 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1234567890/default-avatar.png'
+  },
+  dateOfBirth: {
+    type: Date
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other']
+  },
+  phone: {
+    type: String,
+    match: [/^[0-9]{10}$/, 'Please enter a valid phone number']
+  },
+  artistRequest: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ArtistRequest'
   },
   createdAt: {
     type: Date,
