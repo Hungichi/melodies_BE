@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { register, login, getCurrentUser, updateProfile } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
-
 /**
  * @swagger
  * /api/auth/register:
@@ -147,6 +146,5 @@ router.get('/me', protect, getCurrentUser);
  *       401:
  *         description: Not authorized
  */
-router.put('/profile', protect, updateProfile);
-
+router.put('/update-profile', protect, updateProfile);
 module.exports = router;
